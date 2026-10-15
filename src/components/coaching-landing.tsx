@@ -7,6 +7,7 @@ import { HeroSection } from "./hero-section";
 import { PossibilitiesSection } from "./possibilities-section";
 import { YourFirstStepSection } from "./your-first-step-section";
 import { LearningAndOutcomesSection } from "./learning-and-outcomes-section";
+import { MeetYourCoachSection } from "./meet-your-coach-section";
 import { informationTitles, roadmapSteps, type InformationTopic } from "@/lib/hero-content";
 
 export function CoachingLanding() {
@@ -27,6 +28,7 @@ export function CoachingLanding() {
     <PossibilitiesSection />
     <YourFirstStepSection />
     <LearningAndOutcomesSection onConsultation={() => openInformation("consultation")} />
+    <MeetYourCoachSection />
     <dialog ref={dialog} className="information-dialog" aria-labelledby="information-title" onClose={() => returnFocus.current?.focus()} onClick={event => { if (event.target === dialog.current) { const r = dialog.current.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.current.close(); } }}>
       <button className="dialog-close" aria-label="閉じる" onClick={() => dialog.current?.close()}><X size={23} /></button>
       <p className="dialog-kicker">AI COACHING</p><h2 id="information-title">{informationTitles[topic]}</h2>
