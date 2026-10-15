@@ -1,0 +1,121 @@
+export const metadata = {
+  slug: "what-is-ai",
+  title: "AIとは？仕組みと動き方をやさしく解説",
+  description: "AIは何をしているのか。機械学習・生成AIの違い、学習と推論、文章を作る仕組みを図解と身近な例で説明します。得意・苦手を知り、小さく試すための入門記事です。",
+  category: "basics",
+  publishedAt: "2026-10-15",
+  updatedAt: "2026-10-15",
+  thumbnail: "/images/knowledge/what-is-ai.webp",
+  thumbnailAlt: "入力・モデル・出力の流れを描いた、AIの仕組みのイラスト",
+  tags: ["AI入門", "仕組み", "機械学習", "生成AI"],
+  status: "published",
+  summary: ["AIは認識・予測・生成などを行う技術の総称。文章生成はその一部です。", "機械学習ではデータからモデル内部の数値を調整し、利用時は学習済みモデルで出力を計算します。", "文章生成AIは文脈を手がかりにトークンをつなげます。自然な文章と事実の正しさは別なので、下書き・整理から試し、元の情報を確認しましょう。"]
+}
+
+「AIは便利そう。でも、どうして質問に答えられるの？」
+
+仕組みを少し知ると、AIに任せやすい作業と、自分で確認したい部分が見えてきます。この記事では、数式を使わずにAIの全体像を整理し、身近な文章生成AIが動く流れをたどります。
+
+## AIとは、認識・予測・生成などを行う技術
+
+AIは「Artificial Intelligence（人工知能）」の略です。画像を見分ける、情報から予測する、文章を作るといった働きを、コンピューターで実現する技術を広く指します。
+
+例えば、迷惑メールを判定する機能、おすすめの商品を選ぶ機能、文章を下書きする機能は、目的の異なるAIの使い方です。**AIは、会話するチャットボットだけを指す言葉ではありません。** [IBMのAI解説](https://www.ibm.com/think/topics/artificial-intelligence)
+
+### 機械学習・深層学習・生成AIはどう違う？
+
+| 言葉 | 何を表すか | 身近なイメージ |
+| --- | --- | --- |
+| AI | 認識・予測・生成などを行う技術の総称 | さまざまなAIの大きなくくり |
+| 機械学習 | データからパターンを学ぶ方法 | 過去の例から、迷惑メールらしさを学ぶ |
+| 深層学習 | 多層のニューラルネットワークを使う機械学習 | 画像や文章の複雑な関係を扱う |
+| 生成AI | 文章・画像・音声などを作るAI | 案内文の下書きや画像の生成 |
+
+機械学習はAIを実現する方法の一つで、深層学習はその一種です。一方、生成AIは「何をするか」に注目した呼び方で、多くの現在の生成AIには深層学習が使われています。これらをすべて同じ意味で使わないことが、理解の第一歩です。[Googleの機械学習入門](https://developers.google.com/machine-learning/intro-to-ml/what-is-ml)
+
+## データから「学ぶ」とき、内部では何が起きる？
+
+ここからは、機械学習を使うAIを例に説明します。
+
+例えば迷惑メール判定では、メールの特徴と判定結果の例を使い、新しいメールを分類できるようにします。例を丸ごと覚えることだけが目的ではなく、初めて見るメールにも対応できるパターンを学びます。この学習の結果を使って出力を計算する仕組みを「モデル」と呼びます。[Googleのモデルと機械学習の説明](https://developers.google.com/machine-learning/intro-to-ml/what-is-ml)
+
+ニューラルネットワークでは、情報を数値にして複数の層で処理します。「重み」などの内部の数値が、入力を出力へどう変換するかに関わります。学習では、結果のずれが小さくなるよう、こうした数値を調整します。人間の脳に着想を得た名前ですが、脳をそのまま再現したものと考える必要はありません。[Googleのニューラルネットワーク解説](https://developers.google.com/machine-learning/crash-course/neural-networks/nodes-hidden-layers)
+
+## 学習と、使うときの「推論」は別の段階
+
+学習済みのモデルに新しい入力を渡し、分類・予測・文章などを計算することを「推論」と呼びます。迷惑メールの例なら、過去の例でモデルを調整するのが学習、届いたメールを判定するのが推論です。[Cloudflareの学習と推論の解説](https://www.cloudflare.com/learning/ai/inference-vs-training/)
+
+<LearningInferenceDiagram />
+
+チャットで「もう少し短く」と伝えて返答が変わると、AIがその場で成長したようにも見えます。通常は、今の会話に含まれる指示や例を手がかりに、出力を変えています。**指示を追加することと、モデル本体の数値を再学習で変えることは別です。** [Googleのプロンプトと追加学習の説明](https://developers.google.com/machine-learning/crash-course/llm/tuning)
+
+会話の保存や後日の学習への利用は、サービスや設定によって異なります。実際に使うサービスの説明を確認してください。
+
+<PointBox>
+
+「今の会話を参考にする」「会話を保存する」「モデル本体を学習し直す」は、それぞれ異なる仕組みです。
+
+</PointBox>
+
+## 文章生成AIは、どうやって答えを作る？
+
+ここからは、ChatGPTのようなサービスで使われる**大規模言語モデル（LLM）**を例にします。AIのすべてが、同じ方法で動くわけではありません。
+
+代表的な文章生成モデルは、文章を「トークン」という小さな単位として扱います。トークンは単語の場合も、単語の一部や文字の場合もあり、「1トークン＝日本語1文字」とは限りません。大量の文章を使って続きのトークンなどを予測する学習を行い、言葉や文章のパターンを内部の数値に反映します。利用時は入力を数値として処理し、文脈を手がかりに続きを生成します。[GoogleのLLM解説](https://developers.google.com/machine-learning/crash-course/llm/transformers)
+
+生成の基本的な流れは、次のように整理できます。
+
+1. 質問や、参照する会話・資料を入力として受け取る。
+2. 文脈と学習済みのモデルを使い、次のトークンの候補を計算する。
+3. 設定に応じて候補を選び、できた続きも手がかりにして生成を続ける。
+
+返答は、用意された完成文を毎回取り出すだけの仕組みではありません。生成する際には、すでに出力したトークンも次の生成に使われます。[Cloudflareの文章生成処理の解説](https://blog.cloudflare.com/making-workers-ai-faster/)
+
+### 文脈を扱う「Transformer」
+
+多くのLLMには、Transformerという仕組みが使われます。その重要な要素が、文脈内のトークン同士の関連を計算する「Attention」です。直前の一語だけでなく、参照できる文脈の中で情報の関係を扱います。
+
+文章の自然さにはこうした計算と学習が関わります。ただし、それだけで人間と同じ意識や理解があると判断することはできません。[Google ResearchのTransformer解説](https://research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/)
+
+## 生成することと、検索して調べることは違う
+
+文章を生成するモデルが、毎回インターネットを検索するとは限りません。検索や資料参照を組み合わせたサービスでは、見つけた情報をモデルへ渡し、それを使って回答を作れます。[Google Cloudの外部資料を参照する仕組みの解説](https://cloud.google.com/use-cases/retrieval-augmented-generation)
+
+一方、**自然な文章を作れることと、内容が事実であることは別です。** もっともらしい誤答や、実在しない出典を示すことがあります。こうした現象は「ハルシネーション」などと呼ばれます。根拠を確かめず、文章の自信の強さで正しさを判断しないことが大切です。[NISTの生成AIリスク解説・2.2節](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf)
+
+出典が表示されても、リンク先にその内容が書かれているかを確かめましょう。「検索機能があるから、確認は不要」とは考えない使い方が必要です。
+
+## 得意・苦手を知って、小さな作業から使う
+
+文章生成AIを最初に試すなら、**自分で結果を確認できる下書きや整理**が取り組みやすい入口です。例えば、案内文のたたき台、文章の言い換え、手元のメモの整理などです。
+
+反対に、最新の事実、重要な数値、固有名詞や出典が合っているかは、その回答だけで確定させず、元の資料や適切な確認手段に戻りましょう。計算ツールなどを使う場合も、入力条件と結果の確認は残ります。
+
+### 架空の会議メモを整理してみよう
+
+次は、個人情報を含まない練習用の例です。実在する業務情報ではありません。AIが情報を整理できるか、書かれていない内容を補っていないかを確かめてみてください。
+
+<PromptLab title="決定事項と未定事項を分ける" prompt={"次の架空の会議メモを整理してください。\n【メモ】読書会のテーマは短編小説に決まった。開催日と会場はまだ決まっていない。案内文の担当は佐藤さん。\n\n出力は「決まったこと」「未定のこと」「担当」の3項目にしてください。\nメモにない日時・場所・担当は推測で補わないでください。"} />
+
+テーマ、未定の日程・会場、案内文の担当が、元のメモどおりに整理されているか確認しましょう。続けて「各項目を一文で」と指示すると、条件による出力の変化も試せます。
+
+<TryItYourself title="仕組みを知ったうえで、一度試す" items={["架空のメモを入力し、整理された内容を元の文と比べる", "条件を一つ追加して、返答がどう変わるか確かめる", "元のメモにない情報が追加されていないか確認する"]} />
+
+仕組みをすべて覚える必要はありません。まずは「何を入力し、何を頼み、どこを自分で確認するか」を決める。それが、AIを仕事や学びに取り入れる第一歩になります。
+
+## 参考資料
+
+本記事は、以下の公開資料を参照して入門向けに構成しています。図解・練習用メモ・プロンプトは本記事の説明用に作成したものです。
+
+- [IBM：What is artificial intelligence?](https://www.ibm.com/think/topics/artificial-intelligence)
+- [Google：What is Machine Learning?](https://developers.google.com/machine-learning/intro-to-ml/what-is-ml)
+- [Google：Neural networks — Nodes and hidden layers](https://developers.google.com/machine-learning/crash-course/neural-networks/nodes-hidden-layers)
+- [Cloudflare：AI inference vs. training](https://www.cloudflare.com/learning/ai/inference-vs-training/)
+- [Google：LLM・Transformerの基礎](https://developers.google.com/machine-learning/crash-course/llm/transformers)
+- [Google：追加学習とプロンプトの違い](https://developers.google.com/machine-learning/crash-course/llm/tuning)
+- [Cloudflare：LLMの生成処理](https://blog.cloudflare.com/making-workers-ai-faster/)
+- [Google Research：Transformerの仕組み](https://research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/)
+- [Google Cloud：Retrieval-Augmented Generation](https://cloud.google.com/use-cases/retrieval-augmented-generation)
+- [NIST：生成AIプロファイル（2.2 Confabulation）](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf)
+
+<small>資料確認日：2026年10月15日。製品ごとの機能やデータの取り扱いは、利用するサービスの最新の説明をご確認ください。</small>

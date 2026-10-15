@@ -43,7 +43,7 @@ void main(){
  gl_FragColor=vec4(color,clamp(.12+rim*.62+shine*.23+windowLight*.08,.0,.8));
 }`;
 
-export default function LiquidGlassBackground() {
+export default function LiquidGlassBackground({ subtle = false }: { subtle?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let disposed = false;
@@ -84,9 +84,12 @@ export default function LiquidGlassBackground() {
       const resize = () => { camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(window.devicePixelRatio,window.innerWidth<768?1:1.5));renderer.setSize(window.innerWidth,window.innerHeight); };
       const draw = (timestamp:number) => {
         if (disposed || lost || document.hidden) return;
+        const article = target.dataset.variant === "article";
+        if (article && window.innerWidth < 768) { renderer.domElement.style.opacity = "0"; return; }
+        renderer.domElement.style.opacity = article ? ".45" : "1";
         const interval=window.innerWidth<768?1000/24:1000/30;
         if (timestamp-previous>=interval || !previous) {
-          elapsed+=previous?Math.min((timestamp-previous)/1000,.1):0;previous=timestamp;
+          elapsed+=previous?Math.min((timestamp-previous)/1000,.1)*(article?.45:1):0;previous=timestamp;
           smoothed.lerp(pointer,.025);
           const height=2*Math.tan(THREE.MathUtils.degToRad(18))*9, width=height*camera.aspect;
           meshes.forEach((mesh,index) => {
@@ -105,10 +108,11 @@ export default function LiquidGlassBackground() {
       const onPointer = (event:PointerEvent) => { if(window.innerWidth>=768&&!motion.matches)pointer.set(event.clientX/window.innerWidth-.5,.5-event.clientY/window.innerHeight); };
       const onLost = (event:Event) => { event.preventDefault();lost=true;cancelAnimationFrame(frame);target.dataset.renderer="fallback";renderer.domElement.style.display="none"; };
       resize();resume();
-      window.addEventListener("resize",onResize);window.addEventListener("pointermove",onPointer,{passive:true});document.addEventListener("visibilitychange",resume);motion.addEventListener("change",resume);renderer.domElement.addEventListener("webglcontextlost",onLost);
-      release=()=>{cancelAnimationFrame(frame);window.removeEventListener("resize",onResize);window.removeEventListener("pointermove",onPointer);document.removeEventListener("visibilitychange",resume);motion.removeEventListener("change",resume);renderer.domElement.removeEventListener("webglcontextlost",onLost);meshes.forEach(mesh=>{mesh.geometry.dispose();mesh.material.dispose();});renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();};
+      window.addEventListener("resize",onResize);window.addEventListener("knowledge-background-change",resume);window.addEventListener("pointermove",onPointer,{passive:true});document.addEventListener("visibilitychange",resume);motion.addEventListener("change",resume);renderer.domElement.addEventListener("webglcontextlost",onLost);
+      release=()=>{cancelAnimationFrame(frame);window.removeEventListener("resize",onResize);window.removeEventListener("knowledge-background-change",resume);window.removeEventListener("pointermove",onPointer);document.removeEventListener("visibilitychange",resume);motion.removeEventListener("change",resume);renderer.domElement.removeEventListener("webglcontextlost",onLost);meshes.forEach(mesh=>{mesh.geometry.dispose();mesh.material.dispose();});renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();};
     },120);
     return () => { disposed=true;clearTimeout(timer);release?.(); };
   },[]);
-  return <div ref={host} className="knowledge-glass" aria-hidden="true" />;
+  useEffect(() => { window.dispatchEvent(new Event("knowledge-background-change")); }, [subtle]);
+  return <div ref={host} className="knowledge-glass" data-variant={subtle ? "article" : "index"} aria-hidden="true" />;
 }

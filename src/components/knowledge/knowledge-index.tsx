@@ -11,15 +11,15 @@ import styles from "./knowledge.module.css";
 export function ArticleCard({article}:{article:ArticleMeta}){
  return <article className={styles.card} data-article={article.slug}>
   <Link href={articleHref(article)} className={styles.cardLink}>
-   <div className={styles.thumbnail}><Image src={article.thumbnail} alt="" fill sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, (max-width: 1439px) 29vw, 300px" loading="lazy"/>{article.status==="sample"&&<span className={styles.sampleTag}>サンプル</span>}</div>
+   <div className={styles.thumbnail}>{article.thumbnail?<Image src={article.thumbnail} alt="" fill sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, (max-width: 1439px) 29vw, 300px" loading="lazy"/>:<span className={styles.thumbnailFallback} aria-hidden="true">AI COACHING JOURNAL</span>}{article.status==="sample"&&<span className={styles.sampleTag}>サンプル</span>}</div>
    <div className={styles.cardBody}><h2>{article.title}</h2><div className={styles.cardMeta}><span>{categoryLabel(article.category)}</span>{article.publishedAt?<time dateTime={article.publishedAt}>{formatArticleDate(article.publishedAt)}</time>:<span>公開前プレビュー</span>}</div><p>{article.description}</p><span className={styles.readMore}>記事を読む<ArrowRight size={16} aria-hidden="true"/></span></div>
   </Link>
  </article>;
 }
 
-export function KnowledgeIndex({articles,samples}:{articles:ArticleMeta[];samples:boolean}){
+export function KnowledgeIndex({articles,samples,initialCategory="all"}:{articles:ArticleMeta[];samples:boolean;initialCategory?:string}){
  const root=useRef<HTMLElement>(null), grid=useRef<HTMLDivElement>(null), filterTween=useRef<gsap.core.Tween|null>(null);
- const [selected,setSelected]=useState("all"),[category,setCategory]=useState("all"),[limit,setLimit]=useState(4);
+ const [selected,setSelected]=useState(initialCategory),[category,setCategory]=useState(initialCategory),[limit,setLimit]=useState(4);
  const seen=useRef(new Set<string>());
  const filtered=articles.filter(article=>category==="all"||article.category===category);
  const visible=filtered.slice(0,limit);
