@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { learningThemes, learningOutcomes } from "@/lib/learning-content";
 import styles from "./learning-and-outcomes-section.module.css";
+import { MaterialButton } from "./material-button";
 
 const themeIcons = { chat: MessageSquareText, chart: ChartNoAxesCombined, settings: Settings, code: CodeXml };
 
@@ -138,7 +139,7 @@ export function LearningAndOutcomesSection({ onConsultation }: { onConsultation:
         <h2 id="made-title"><span>学ぶことも、つくるものも。</span><span>あなたに合わせて。</span></h2>
         <p className={styles.madeDescription}>決まったコースを受講するのではなく、あなたの目標や現在のスキルに合わせて、学習内容と最終成果物を一緒に設計します。<br />AIの基本操作から、業務改善、Webサイト・アプリ開発まで。<br />本当に必要なことを、マンツーマンで実践しながら学んでいきます。</p>
         <p className={styles.ctaHelp}>何から始めればいいかわからなくても大丈夫。<br />まずは、やってみたいことや今のお悩みをお聞かせください。</p>
-        <button type="button" className={styles.cta} onClick={onConsultation}>無料カウンセリングで相談する<ArrowRight size={20} aria-hidden="true" /></button>
+        <MaterialButton tone="pink" className={styles.cta} onClick={onConsultation}>無料カウンセリングで相談する<ArrowRight size={20} aria-hidden="true" /></MaterialButton>
       </div></section>
     </div>
   </section>;

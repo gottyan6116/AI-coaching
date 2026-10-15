@@ -5,13 +5,14 @@ import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 import { HeroVisual } from "./hero-visual";
 import { LearningRoadmap } from "./learning-roadmap";
+import { MaterialButton } from "./material-button";
 import type { InformationTopic } from "@/lib/hero-content";
 
 export function HeroHeadline() {
   return <h1 className="hero-headline" aria-label="AIで可能性を広げる"><span className="headline-ai" aria-hidden="true">AI</span><span className="headline-piece" aria-hidden="true">で</span><span className="headline-piece headline-possibility" aria-hidden="true">可能性</span><span className="headline-piece headline-ending" aria-hidden="true">を広げる</span></h1>;
 }
 export function HeroCTA({ onNavigate }: { onNavigate: (topic: InformationTopic) => void }) {
-  return <div className="hero-cta copy-reveal"><button className="cta-primary" onClick={() => onNavigate("consultation")}>無料相談はこちら<ArrowRight size={20} aria-hidden="true" /></button><button className="cta-secondary" onClick={() => onNavigate("courses")}>コース内容を見る<ArrowRight size={20} aria-hidden="true" /></button></div>;
+  return <div className="hero-cta copy-reveal"><MaterialButton className="cta-primary" onClick={() => onNavigate("consultation")}>無料相談はこちら<ArrowRight size={20} aria-hidden="true" /></MaterialButton><MaterialButton tone="light" className="cta-secondary" onClick={() => onNavigate("courses")}>コース内容を見る<ArrowRight size={20} aria-hidden="true" /></MaterialButton></div>;
 }
 export function HeroSection({ onNavigate }: { onNavigate: (topic: InformationTopic) => void }) {
   const root = useRef<HTMLElement>(null);

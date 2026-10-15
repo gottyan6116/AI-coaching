@@ -16,9 +16,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-
 .header-cta { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-height: 46px; padding: 0 24px; border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: white; font-size: 14px; font-weight: 600; white-space: nowrap; transition: background .2s; }
 .header-cta:hover { background: #394550; }
 .header-cta-short { display: none; }
-.header-nav button { background: none; border: 0; padding: 10px 0; font-size: clamp(14px, 1.05vw, 18px); font-weight: 500; position: relative; }
-.header-nav button::after { content: ""; position: absolute; bottom: 4px; height: 1px; background: currentColor; left: 0; width: 100%; transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
-.header-nav button:hover::after { transform: scaleX(1); }
+.header-nav :is(button, a) { background: none; border: 0; padding: 10px 0; font-size: clamp(14px, 1.05vw, 18px); font-weight: 500; position: relative; }
+.header-nav :is(button, a)::after { content: ""; position: absolute; bottom: 4px; height: 1px; background: currentColor; left: 0; width: 100%; transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+.header-nav :is(button, a):hover::after { transform: scaleX(1); }
 .menu-toggle { display: none; }
 .hero-section { position: relative; isolation: isolate; min-height: 100svh; height: max(100svh, 56.28vw); overflow: clip; background: #fff; }
 .hero-background { position: absolute; inset: 0; z-index: -5; background: radial-gradient(ellipse at 75% 23%, #f1f7fc 0%, transparent 46%), linear-gradient(110deg, #fff 8%, #fffdfd 50%, #f9fcff 100%); }
@@ -99,8 +99,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-
   .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: transparent; }
   .header-nav { position: absolute; left: 0; right: 0; top: 72px; margin-left: 0; max-height: calc(100dvh - 72px); overflow-y: auto; background: rgb(255 255 255 / .98); box-shadow: 0 16px 25px rgb(32 40 50 / .06); display: flex; flex-direction: column; align-items: stretch; padding: 12px 6% 24px; gap: 4px; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .2s, transform .2s, visibility .2s; }
   .header-nav.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
-  .header-nav button { text-align: left; padding: 14px 5px; font-size: 15px; }
-  .header-nav button::after { display: none; }
+  .header-nav :is(button, a) { text-align: left; padding: 14px 5px; font-size: 15px; }
+  .header-nav :is(button, a)::after { display: none; }
   .hero-section { height: auto; min-height: 100svh; padding-top: 116px; padding-bottom: 34px; }
   .hero-copy { position: relative; top: auto; left: auto; margin: 0 6%; }
   .hero-eyebrow { font-size: 12px; letter-spacing: .2em; margin: 0 0 20px; }
