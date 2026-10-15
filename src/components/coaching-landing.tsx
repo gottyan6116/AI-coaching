@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { X } from "lucide-react";
 import { Header } from "./header";
 import { HeroSection } from "./hero-section";
+import { PossibilitiesSection } from "./possibilities-section";
 import { informationTitles, roadmapSteps, type InformationTopic } from "@/lib/hero-content";
 
 export function CoachingLanding() {
@@ -21,6 +22,7 @@ export function CoachingLanding() {
     <a className="skip-link" href="#main">メインコンテンツへ</a>
     <Header onNavigate={openInformation} />
     <HeroSection onNavigate={openInformation} />
+    <PossibilitiesSection />
     <dialog ref={dialog} className="information-dialog" aria-labelledby="information-title" onClose={() => returnFocus.current?.focus()} onClick={event => { if (event.target === dialog.current) { const r = dialog.current.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.current.close(); } }}>
       <button className="dialog-close" aria-label="閉じる" onClick={() => dialog.current?.close()}><X size={23} /></button>
       <p className="dialog-kicker">AI COACHING</p><h2 id="information-title">{informationTitles[topic]}</h2>
