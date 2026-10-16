@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 const vertexShader = `
 uniform float uTime;
 uniform float uSeed;
+uniform float uActivity;
 varying vec3 vNormal;
 varying vec3 vPosition;
 float hash(vec3 p){ return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
@@ -11,14 +12,14 @@ float noise(vec3 p){
  vec3 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
  return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
 }
-float field(vec3 p){ return noise(p*1.65+vec3(uTime*.041,uSeed,uTime*.027))*.75+noise(p*3.1+vec3(uSeed,-uTime*.022,0.0))*.25; }
+float field(vec3 p){ float t=uTime*(1.0+uActivity*1.4);return noise(p*1.65+vec3(t*.041,uSeed,t*.027))*.75+noise(p*3.1+vec3(uSeed,-t*.022,0.0))*.25; }
 void main(){
  vec3 p=position;
  float n=field(p);
  float e=.04;
  vec3 gradient=vec3(field(p+vec3(e,0,0))-n,field(p+vec3(0,e,0))-n,field(p+vec3(0,0,e))-n)/e;
- vec3 deformed=p+normal*(n-.45)*.48;
- vec3 corrected=normalize(normal-.35*(gradient-normal*dot(gradient,normal)));
+ vec3 deformed=p+normal*(n-.45)*(.48+uActivity*.20);
+ vec3 corrected=normalize(normal-(.35+uActivity*.15)*(gradient-normal*dot(gradient,normal)));
  vec4 world=modelMatrix*vec4(deformed,1.0);
  vPosition=world.xyz;
  vNormal=normalize(mat3(modelMatrix)*corrected);
@@ -27,6 +28,7 @@ void main(){
 const fragmentShader = `
 uniform float uTime;
 uniform float uSeed;
+uniform float uActivity;
 varying vec3 vNormal;
 varying vec3 vPosition;
 void main(){
@@ -38,9 +40,9 @@ void main(){
  float windowLight=smoothstep(.58,.78,reflected.y)*(1.0-smoothstep(.86,.97,reflected.y));
  float tint=clamp(.5+.38*n.x+.2*sin(n.y*3.0+uSeed+uTime*.014),0.0,1.0);
  vec3 pastel=mix(vec3(.53,.70,.93),vec3(.93,.57,.76),tint);
- vec3 color=mix(vec3(.96,.98,1.0),pastel,.45+rim*.45);
+ vec3 color=mix(vec3(.96,.98,1.0),pastel,.45+uActivity*.06+rim*.45);
  color+=vec3(1.0)*shine*.65+vec3(.25)*windowLight;
- gl_FragColor=vec4(color,clamp(.12+rim*.62+shine*.23+windowLight*.08,.0,.8));
+ gl_FragColor=vec4(color,clamp(.12+uActivity*.03+rim*.62+shine*.23+windowLight*.08,.0,.8));
 }`;
 
 export default function LiquidGlassBackground({ subtle = false }: { subtle?: boolean }) {
@@ -71,7 +73,7 @@ export default function LiquidGlassBackground({ subtle = false }: { subtle?: boo
       const seeds = [1.2,4.7,8.3];
       const meshes = seeds.slice(0,mobile?2:3).map((seed,index) => {
         const geometry = new THREE.IcosahedronGeometry(1,mobile?8:16);
-        const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, transparent:true, depthWrite:false, uniforms:{uTime:{value:0},uSeed:{value:seed}} });
+        const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, transparent:true, depthWrite:false, uniforms:{uTime:{value:0},uSeed:{value:seed},uActivity:{value:0}} });
         const mesh = new THREE.Mesh(geometry,material);
         mesh.scale.set(index===0?1.8:1.25,index===0?1.3:1.0,.85);
         scene.add(mesh);return mesh;
@@ -89,14 +91,27 @@ export default function LiquidGlassBackground({ subtle = false }: { subtle?: boo
         renderer.domElement.style.opacity = article ? ".45" : "1";
         const interval=window.innerWidth<768?1000/24:1000/30;
         if (timestamp-previous>=interval || !previous) {
-          elapsed+=previous?Math.min((timestamp-previous)/1000,.1)*(article?.45:1):0;previous=timestamp;
+          elapsed += previous ? Math.min((timestamp-previous)/1000, article ? .1 : .25) * (article ? .45 : 1) : 0;
+          previous=timestamp;
           smoothed.lerp(pointer,.025);
           const height=2*Math.tan(THREE.MathUtils.degToRad(18))*9, width=height*camera.aspect;
           meshes.forEach((mesh,index) => {
             const seed=seeds[index];
             mesh.material.uniforms.uTime.value=elapsed;
-            mesh.position.set((index===0?.43:index===1?-.4:.02)*width+Math.sin(elapsed*.043+seed)*.12+smoothed.x*.08,(index===0?.23:index===1?-.31:-.05)*height+Math.sin(elapsed*.067+seed)*.17+Math.sin(elapsed*.031+seed)*.09+smoothed.y*.06,index===2?-2:0);
-            mesh.rotation.set(Math.sin(elapsed*.021+seed)*.25,elapsed*.012+seed,Math.cos(elapsed*.032+seed)*.18);
+            mesh.material.uniforms.uActivity.value=article ? 0 : 1;
+            // Keep article motion unchanged; bring the index silhouettes inside the viewport.
+            const x=(article ? (index===0 ? .43 : index===1 ? -.4 : .02) : (index===0 ? .27 : index===1 ? -.29 : .10))*width;
+            const y=(article ? (index===0 ? .23 : index===1 ? -.31 : -.05) : (index===0 ? .17 : index===1 ? -.25 : -.05))*height;
+            mesh.position.set(
+              x+Math.sin(elapsed*(article ? .043 : .11)+seed*(article ? 1 : .53))*(article ? .12 : .27)+smoothed.x*.08,
+              y+Math.sin(elapsed*(article ? .067 : .14)+seed*(article ? 1 : .7))*(article ? .17 : .27)+Math.sin(elapsed*(article ? .031 : .063)+seed)*(article ? .09 : .14)+smoothed.y*.06,
+              index===2 ? -2 : 0,
+            );
+            mesh.rotation.set(
+              Math.sin(elapsed*(article ? .021 : .055)+seed)*(article ? .25 : .30),
+              elapsed*(article ? .012 : .035)+seed,
+              Math.cos(elapsed*(article ? .032 : .07)+seed)*(article ? .18 : .22),
+            );
             mesh.visible=!(window.innerWidth<768&&index===2);
           });
           try { renderer.render(scene,camera); } catch { lost=true;target.dataset.renderer="fallback";renderer.domElement.style.display="none";return; }
